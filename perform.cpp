@@ -1,6 +1,7 @@
 #include "perform.hpp"
 #include "console.hpp"
 #include <iostream>
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <unistd.h>
 

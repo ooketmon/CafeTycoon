@@ -1,8 +1,10 @@
 #ifndef __CONSOLE_HPP__
 #define __CONSOLE_HPP__
 
+#include <stdio.h>
 #include <string>
 
+// 키값
 #define UP 72
 #define DOWN 80
 #define LEFT 75
@@ -12,22 +14,41 @@
 #define BACK 18 // 8
 #define ESC 27
 
+// 색상
+#define BLACK 30
+#define RED 31
+#define GREEN 32
+#define YELLOW 33
+#define BLUE 34
+#define MAGENTA 35
+#define CYAN 36
+#define LIGHTGRAY 37
+#define GRAY 90
+#define LIGHTRED 91
+#define LIGHTGREEN 92
+#define LIGHTYELLOW 93
+#define LIGHTBLUE 94
+#define LIGHTMAGENTA 95
+#define LIGHTCYAN 96
+
 using namespace std;
 
 class Console {
   private:
-    int x;
-    int y;
-
-    int linux_kbhit(void); // 키입력 제어 함수
+    static int x;
+    static int y;
+    static int linux_kbhit(void); // 키입력 제어 함수
 
   public:
-    int getX() { return x; }   // 현제 x 좌표
-    int getY() { return y; }   // 현제 y 좌표
-    void gotoXY(int x, int y); // x,y 좌표 변경
-    void printColorString(string str,
-                          int color = 39); // 글씨색 변경 Default : 기본색
-    void setBackground(int color = 49); // 배경색 변경 Default : 기본색
+    static int getX() { return x; }   // 현제 x 좌표
+    static int getY() { return y; }   // 현제 y 좌표
+    static void gotoXY(int x, int y); // x,y 좌표 변경
+    static void gotoEnd();
+    static void
+    printColorString(const char *str,
+                     int color = 39); // 글씨색 변경 Default : 기본색
+    static void setBackground(int color = 49); // 배경색 변경 Default : 기본색
+    static void printDot(int x, int y, int color);
     static string inputPassword(int maxsize); // 비밀번호 제어 함수
     static string input(int maxsize = 1024);  // 일반 입력 함수
 };
