@@ -4,12 +4,12 @@
 #include "console.hpp"
 #include <stdlib.h>
 
-class Page{
-    private:
-        int num;
-        // 현제 페이지 : 0 - 메인화면, 1 - 로그인창
-    public:
-        void clear();
+class Page {
+  private:
+    int num;
+    // 현재 페이지 : 0 - 메인화면, 1 - 로그인창
+  public:
+    void clear();
 };
 
 #endif
