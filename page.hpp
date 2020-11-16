@@ -12,6 +12,7 @@ class Page {
     void clear();
 };
 
+<<<<<<< HEAD
 // Pseudo Code
 // signUp
 // if(회원가입 선택)
@@ -47,4 +48,6 @@ class Page {
 //     없다면 -> 경고문 출력
 // }
 
+=======
+>>>>>>> 7b7566a9dc7611982af6cf6fcde508118f7a4228
 #endif
