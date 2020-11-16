@@ -21,7 +21,7 @@ void Data::checkData() {
     }
 }
 
-bool signUp() {
+bool Data::signUp() {
     string id, pw;
     cout << "ID : ";
     Console::input();

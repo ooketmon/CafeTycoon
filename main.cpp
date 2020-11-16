@@ -5,6 +5,7 @@
 #include <iostream>
 
 using namespace std;
+using namespace Perform;
 
 int main() {
 
@@ -14,6 +15,9 @@ int main() {
     // page.login();
     // page.signUp();
     // page.mainPage();
+
+    Data data;
+    data.signUp();
 
     return 0;
 }
