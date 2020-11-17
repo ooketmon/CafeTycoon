@@ -7,20 +7,6 @@
 #define WIDTH 65
 #define HEIGHT 25
 
-int Console::linux_kbhit(void) {
-
-    struct termios oldt, newt;
-    int ch;
-    tcgetattr(STDIN_FILENO, &oldt);
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-    ch = getchar();
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-
-    return ch;
-}
-
 int Console::linux_getch(void) {
     int ch;
     struct termios buf, save;

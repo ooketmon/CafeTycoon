@@ -13,8 +13,8 @@ class Data {
 
   public:
     Data();
-    bool signUp();
-    bool signIn();
+    bool signUp(); //회원가입
+    bool signIn(); //로그인
 };
 } // namespace Perform
 
