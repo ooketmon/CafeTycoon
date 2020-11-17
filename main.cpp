@@ -18,6 +18,7 @@ int main() {
 
     Data data;
 
-    data.signUp();
+    // data.signUp();
+    data.signIn();
     return 0;
 }

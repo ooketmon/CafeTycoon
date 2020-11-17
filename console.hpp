@@ -27,7 +27,6 @@ class Console {
   private:
     static int x;
     static int y;
-    static int linux_kbhit(void);
     static int linux_getch(void);
 
   public:

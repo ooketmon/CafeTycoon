@@ -61,7 +61,7 @@ bool Data::signUp() {
     fd = open(pwPath.c_str(), O_CREAT | O_WRONLY, PERMS);
     if (fd == -1) {
         cout << "Sign Up error please Retry";
-        perror("creat() error!");
+        perror("open() error!");
         rmdir(id.c_str());
         return false;
     }
@@ -72,7 +72,7 @@ bool Data::signUp() {
 
     if (wsize == -1) {
         cout << "Sign Up error please Retry";
-        perror("open() error!");
+        perror("write() error!");
         remove(pwPath.c_str());
         rmdir(id.c_str());
         return false;
@@ -84,11 +84,15 @@ bool Data::signUp() {
 bool Data::signIn() {
     string id;
     string pw;
+    string originPw;
     string pwPath;
+    char *temp;
+    int pwCount = 1;
 
     int fd = 0;
-    ssize_t wsize;
+    struct stat fileinfo;
 
+    // 아이디 입력
     while (1) {
         cout << "ID : ";
         id = dataPath;
@@ -96,32 +100,46 @@ bool Data::signIn() {
 
         if (access(dataPath.c_str(), F_OK) != -1) {
             //폴더가 존재할떄
-            cout << "PW : ";
-            pw = Console::input(1);
-            pwPath = id + "/pw.dat";
-
-            fd = open(pwPath.c_str(), O_WRONLY, PERMS);
-
-            if (fd != -1) {
-                cout << "Sign Up error please Retry";
-                perror("open() error!");
-                rmdir(id.c_str());
-                return false;
-            }
-
+            break;
         }
     }
 
-    wsize = write(fd, (char *)pw.c_str(), pw.length());
+    //비밀번호 불러오기;
 
+    pwPath = id + "/pw.dat";
+    fd = open(pwPath.c_str(), O_RDONLY);
+
+    if (fd == -1) {
+        cout << "Sign In error please Retry";
+        perror("open() error!");
+        return false;
+    }
+
+    if (fstat(fd, &fileinfo) == -1) {
+        cout << "Sign In error please Retry";
+        perror("fstat() error!");
+        return false;
+    }
+
+    temp = (char *)malloc(fileinfo.st_size);
+    if (read(fd, (char *)temp, fileinfo.st_size) == -1) {
+        cout << "Sign In error please Retry";
+        perror("read() error!");
+        return false;
+    }
+    originPw = temp;
     close(fd);
 
-    if (wsize == -1) {
-        cout << "Sign Up error please Retry";
-        perror("creat() error!");
-        remove(pwPath.c_str());
-        rmdir(id.c_str());
-        return false;
+    //비밀번호 입력
+    while (1) {
+        if (pwCount > 5)
+            return false;
+
+        cout << "PW : ";
+        pw = Console::input(1);
+
+        if (pw == originPw)
+            break;
     }
 
     return true;
