@@ -9,11 +9,12 @@ namespace Perform {
 class Data {
   private:
     string username;
+    string dataPath;
 
   public:
-    void checkData();
+    Data();
     bool signUp();
-    int signIn();
+    bool signIn();
 };
 } // namespace Perform
 

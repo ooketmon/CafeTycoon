@@ -1,89 +1,67 @@
 #include "console.hpp"
 #include <iostream>
+#include <sys/select.h>
 #include <termios.h>
 #include <unistd.h>
 
 #define WIDTH 65
 #define HEIGHT 25
 
-void Console::gotoXY(int x, int y) {
-    printf("\033[%d;%df", y, x);
-    fflush(stdout);
-}
-
 int Console::linux_kbhit(void) {
+
     struct termios oldt, newt;
     int ch;
-
     tcgetattr(STDIN_FILENO, &oldt);
     newt = oldt;
-
     newt.c_lflag &= ~(ICANON | ECHO);
     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-
     ch = getchar();
-
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 
     return ch;
 }
 
-string Console::inputPassword(int maxsize) {
-    string password;
-    int index = 0;
+int Console::linux_getch(void) {
+    int ch;
+    struct termios buf, save;
+    tcgetattr(0, &save);
+    buf = save;
+    buf.c_lflag &= ~(ICANON | ECHO);
+    buf.c_cc[VMIN] = 1;
+    buf.c_cc[VTIME] = 0;
+    tcsetattr(0, TCSAFLUSH, &buf);
+    ch = getchar();
+    tcsetattr(0, TCSAFLUSH, &save);
 
-    while (1) {
-        password[index++] = linux_kbhit();
-        if (password[index] == BACK - 10) {
-            if (index > 0) {
-                printf("\b \b");
-                index--;
-            }
-            continue;
-
-        } else if (password[index] == ENTER) {
-            break;
-        } else if (index >= maxsize) {
-            continue;
-        } else if (password[index] == ESC) {
-            return NULL;
-        } else {
-            cout << "*";
-            index++;
-        }
-    }
-
-    return password;
+    return ch;
 }
 
-string Console::input(int maxsize) {
-
-    string str;
+const char *Console::input(int mode, int maxsize) {
+    char *ch = new char[maxsize];
     int index = 0;
 
     while (1) {
-
-        str[index] = linux_kbhit();
-        if (str[index] == BACK - 10) {
-            if (index > 0) {
-                printf("\b \b");
-                index--;
-            }
-            continue;
-
-        } else if (str[index] == ENTER) {
+        ch[index] = Console::linux_getch();
+        if (ch[index] == 127) {
+            cout << "\b \b";
+            index--;
+        } else if (ch[index] == 10) {
+            cout << ch[index];
             break;
-        } else if (index >= maxsize) {
-            continue;
-        } else if (str[index] == ESC) {
-            return NULL;
-        } else {
-            cout << str[index];
+        } else if (index < maxsize) {
+            (mode == 0) ? cout << ch[index] : cout << '*';
             index++;
         }
     }
-    str[index] = '\0';
-    return str;
+
+    ch[index] = '\0';
+
+    return ch;
+}
+
+void Console::gotoXY(int x, int y) {
+    printf("\033[%d;%df", y, x);
+    fflush(stdout);
 }
 
 void Console::printColorString(const char *str, int color) {

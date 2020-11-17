@@ -4,16 +4,6 @@
 #include <stdio.h>
 #include <string>
 
-// 키값
-#define UP 72
-#define DOWN 80
-#define LEFT 75
-#define RIGHT 77
-#define SPACE 32
-#define ENTER 13
-#define BACK 18 // 8
-#define ESC 27
-
 // 색상
 #define BLACK 30
 #define RED 31
@@ -37,7 +27,8 @@ class Console {
   private:
     static int x;
     static int y;
-    static int linux_kbhit(void); // 키입력 제어 함수
+    static int linux_kbhit(void);
+    static int linux_getch(void);
 
   public:
     static int getX() { return x; }   // 현제 x 좌표
@@ -49,8 +40,8 @@ class Console {
                      int color = 39); // 글씨색 변경 Default : 기본색
     static void setBackground(int color = 49); // 배경색 변경 Default : 기본색
     static void printDot(int x, int y, int color);
-    static string inputPassword(int maxsize); // 비밀번호 제어 함수
-    static string input(int maxsize = 1024);  // 일반 입력 함수
+    static const char *
+    input(int mode = 0, int maxsize = 20); // mode 0 : 일반입력, 1 : 비밀번호
 };
 
 #endif //__CONSOLE_HPP__
