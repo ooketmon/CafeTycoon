@@ -27,6 +27,8 @@ class Console {
   private:
     static int x;
     static int y;
+    static int linux_kbhit(void);
+    static int linux_getch(void);
 
   public:
     static int getX() { return x; }   // 현제 x 좌표
@@ -38,6 +40,8 @@ class Console {
                      int color = 39); // 글씨색 변경 Default : 기본색
     static void setBackground(int color = 49); // 배경색 변경 Default : 기본색
     static void printDot(int x, int y, int color);
+    static const char *
+    input(int mode = 0, int maxsize = 20); // mode 0 : 일반입력, 1 : 비밀번호
 };
 
 #endif //__CONSOLE_HPP__

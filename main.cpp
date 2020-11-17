@@ -17,7 +17,7 @@ int main() {
     // page.mainPage();
 
     Data data;
-    data.signUp();
 
+    data.signUp();
     return 0;
 }
