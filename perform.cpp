@@ -42,6 +42,7 @@ bool Data::signUp() {
     int fd = 0;
     ssize_t wsize;
 
+    // 아이디 입력
     while (1) {
         cout << "ID : ";
         id = dataPath;
@@ -54,6 +55,7 @@ bool Data::signUp() {
         }
     }
 
+    // 비밀번호 입력
     cout << "PW : ";
     pw = Console::input(1);
     pwPath = id + "/pw.dat";

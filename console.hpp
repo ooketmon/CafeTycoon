@@ -4,6 +4,13 @@
 #include <stdio.h>
 #include <string>
 
+#define BACK 127
+#define ENTER 10
+#define UP 279165
+#define DOWN 279166
+#define RIGHT 279167
+#define LEFT 279168
+
 // 색상
 #define BLACK 30
 #define RED 31
