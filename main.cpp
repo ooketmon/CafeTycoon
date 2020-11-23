@@ -5,20 +5,10 @@
 #include <iostream>
 
 using namespace std;
-using namespace Perform;
 
 int main() {
-
-    Page page;
-    // page.frame();
-    // page.startPage();
-    // page.login();
-    // page.signUp();
-    // page.mainPage();
-
-    Data data;
-
-    // data.signUp();
-    data.signIn();
+    User user("SON");
+    Game game;
+    game.start(user);
     return 0;
 }
