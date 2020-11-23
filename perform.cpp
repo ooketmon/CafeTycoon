@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <user.hpp>
 
 using namespace std;
 
@@ -248,4 +249,194 @@ void Game::start(User &user) {
     }
 
     msgctl(id, IPC_RMID, NULL);
+}
+
+// Constructor
+Store::Store() {
+    int cursor; // 커서값이 있다고 생각하자
+    printItem(level);
+}
+
+//상점 품목 표시
+//커서 첫 위치 조정해야함
+int Store::printItem(int level) {
+    menu1 = access(path_menu1, F_OK);
+    menu2 = access(path_menu2, F_OK);
+    menu3 = access(path_menu3, F_OK);
+    menu4 = access(path_menu4, F_OK);
+
+    if (menu1 == -1) { //구매기록없음
+        if (level >= lev_menu1) {
+            cout << "          1. 홍차" << endl;
+        } else {
+            cout << "[Locked]  1. 홍차 " << endl;
+        }
+    } else { // 구매기록 있음
+        cout << " [Owned]  1. 홍차 " << endl;
+    }
+    cout << endl;
+
+    if (menu2 == -1) { //구매기록없음
+        if (level >= lev_menu2) {
+            cout << "          2. 레몬 에이드" << endl;
+        } else {
+            cout << "[Locked]  2. 레몬 에이드 " << endl;
+        }
+    } else { // 구매기록 있음
+        cout << " [Owned]  2. 레몬 에이드 " << endl;
+    }
+    cout << endl;
+
+    if (menu3 == -1) { //구매기록없음
+        if (level >= lev_menu3) {
+            cout << "          3. 카페모카" << endl;
+        } else {
+            cout << "[Locked]  3. 카페모카 " << endl;
+        }
+    } else { // 구매기록 있음
+        cout << " [Owned]  3. 카페모카 " << endl;
+    }
+    cout << endl;
+
+    if (menu4 == -1) { //구매기록없음
+        if (level >= lev_menu4) {
+            cout << "          4. 카라멜 마키야또" << endl;
+        } else {
+            cout << "[Locked]  4. 카라멜 마키야또" << endl;
+        }
+    } else { // 구매기록 있음
+        cout << " [Owned]  4. 카라멜 마키야또" << endl;
+    }
+    cout << endl;
+
+    return 0;
+}
+
+int Store::buyItem(int cursor) {
+    // 레시피를 소유하고 있지 않음
+    switch (cursor) {
+    case 1:
+        if (level >= lev_menu1 && money >= cost_menu1) {
+            cout << "해당 레시피를 구매하시겠습니까? 잔액에서" << cost_menu1
+                 << "원이 차감됩니다." << endl;
+            cout << "구매하시려면 Enter 자판을 눌러주세요. 아니라면  왼쪽 "
+                    "방향키를 눌러주세요."
+                 << endl;
+            switch (cursor) {
+                int fd = 0;
+
+                // case 1//"Enter": //엔터키가 눌렸을 때 - 수정 필요
+                //     fd = open(path_menu1, O_RDWR | O_CREAT);
+                //     if (fd == -1) {
+                //         perror("file open() error!");
+                //         exit(-1);
+                //     }
+                //     close(fd);
+                //     cout << "구매가 완료되었습니다." << endl;
+
+                // case 2//"왼쪽": // 왼쪽 방향키가 눌렸을 때
+                //     printItem(level);
+            }
+        } else {
+            cout << "구매 조건이 충족되지 않았습니다. 상점 초기 화면으로 "
+                    "돌아갑니다."
+                 << endl;
+            printItem(level);
+        }
+        break;
+    case 2:
+        if (level >= lev_menu2 && money >= cost_menu2) {
+            cout << "해당 레시피를 구매하시겠습니까? 잔액에서" << cost_menu1
+                 << "원이 차감됩니다." << endl;
+            cout << "구매하시려면 Enter 자판을 눌러주세요. 아니라면 "
+                    "방향키를 "
+                    "눌러주세요."
+                 << endl;
+            switch (cursor) {
+                int fd = 0;
+                // case "Enter": //엔터키가 눌렸을 때
+                //     fd = open(path_menu2, O_RDWR | O_CREAT);
+                //     if (fd == -1) {
+                //         perror("file open() error!");
+                //         exit(-1);
+                //     }
+                //     close(fd);
+                //     cout << "구매가 완료되었습니다." << endl;
+
+                // case "왼쪽": // 왼쪽 방향키가 눌렸을 때
+                //     printItem(level);
+            }
+        } else {
+            cout << "구매 조건이 충족되지 않았습니다. 상점 초기 화면으로 "
+                    "돌아갑니다."
+                 << endl;
+            printItem(level);
+        }
+        break;
+    case 3:
+        if (level >= lev_menu3 && money >= cost_menu3) {
+            cout << "해당 레시피를 구매하시겠습니까? 잔액에서" << cost_menu1
+                 << "원이 차감됩니다." << endl;
+            cout << "구매하시려면 Enter 자판을 눌러주세요. 아니라면 "
+                    "방향키를 "
+                    "눌러주세요."
+                 << endl;
+            switch (cursor) {
+                int fd = 0;
+                // case "Enter": //엔터키가 눌렸을 때
+                //     fd = open(path_menu3, O_RDWR | O_CREAT);
+                //     if (fd == -1) {
+                //         perror("file open() error!");
+                //         exit(-1);
+                //     }
+                //     close(fd);
+                //     cout << "구매가 완료되었습니다." << endl;
+
+                // case "왼쪽": // 왼쪽 방향키가 눌렸을 때
+                //     printItem(level);
+            }
+        } else {
+            cout << "구매 조건이 충족되지 않았습니다. 상점 초기 화면으로 "
+                    "돌아갑니다."
+                 << endl;
+            printItem(level);
+        }
+        break;
+    case 4:
+        if (level >= lev_menu3 && money >= cost_menu3) {
+            cout << "해당 레시피를 구매하시겠습니까? 잔액에서" << cost_menu1
+                 << "원이 차감됩니다." << endl;
+            cout << "구매하시려면 Enter 자판을 눌러주세요. 아니라면 "
+                    "방향키를 "
+                    "눌러주세요."
+                 << endl;
+            switch (cursor) {
+                int fd = 0;
+
+                // case "Enter": //엔터키가 눌렸을 때
+                //     fd = open(path_menu4, O_RDWR | O_CREAT);
+                //     if (fd == -1) {
+                //         perror("file open() error!");
+                //         exit(-1);
+                //     }
+                //     close(fd);
+                //     cout << "구매가 완료되었습니다." << endl;
+
+                // case "왼쪽": // 왼쪽 방향키가 눌렸을 때
+                //     printItem(level);
+            }
+        } else {
+            cout << "구매 조건이 충족되지 않았습니다. 상점 초기 화면으로 "
+                    "돌아갑니다."
+                 << endl;
+            printItem(level);
+        }
+        break;
+    }
+
+    // 샀다는 거 반환해야함 (벡터나 배열에 넣어주자) -> 깃허브 CafeTycoon에
+    // 올라온 User 파일을 보았더니 recipe라는 벡터로 저장하는 것으로
+    // 보였으나 왜 길이가 2이지,,? 라는 생각이 들어서 어떻게 쓰려고 만든
+    // 벡터인지 모르겠음 다시 display 함수 호출해야하는지 첫화면으로
+    // 돌아가는지 모르겠음
 }
