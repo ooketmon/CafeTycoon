@@ -14,7 +14,7 @@ int main() {
     // page.startPage();
     // page.login();
     // page.signUp();
-    // page.mainPage();
+    page.mainPage();
 
     Data data;
 
