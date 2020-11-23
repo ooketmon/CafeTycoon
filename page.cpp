@@ -227,5 +227,159 @@ void Page::mainPage() {
     Console::setBackground(LIGHTGRAY);
     Console::printColorString("  STORE", GREEN);
 
+    // MY INFO
+    for (int i = 50; i < 58; i++)
+        Console::printDot(i, 17, LIGHTGRAY);
+    for (int i = 51; i < 57; i++)
+        Console::printDot(i, 18, LIGHTGRAY);
+    for (int i = 52; i < 56; i++)
+        Console::printDot(i, 19, LIGHTGRAY);
+    for (int i = 50; i < 58; i++)
+        for (int j = 20; j < 23; j++)
+            Console::printDot(i, j, LIGHTBLUE);
+    for (int i = 50; i < 58; i++)
+        for (int j = 15; j < 17; j++)
+            Console::printDot(i, j, BLACK);
+    Console::printDot(50, 17, BLACK);
+    Console::printDot(50, 18, BLACK);
+    Console::printDot(57, 17, BLACK);
+    Console::printDot(57, 18, BLACK);
+    Console::printDot(50, 19, BLACK);
+    Console::printDot(51, 19, BLACK);
+    Console::printDot(57, 19, BLACK);
+    Console::printDot(56, 19, BLACK);
+    Console::printDot(50, 20, BLACK);
+    Console::printDot(57, 20, BLACK);
+    Console::printDot(52, 19, BLACK);
+    Console::printDot(55, 19, BLACK);
+    Console::printDot(51, 20, BLACK);
+    Console::printDot(56, 20, BLACK);
+    Console::printDot(50, 21, BLACK);
+    Console::printDot(57, 21, BLACK);
+    Console::gotoXY(52, 17);
+    Console::setBackground(LIGHTGRAY);
+    Console::printColorString(".", BLACK);
+    Console::gotoXY(55, 17);
+    Console::setBackground(LIGHTGRAY);
+    Console::printColorString(".", BLACK);
+    Console::gotoXY(53, 17);
+    Console::setBackground(LIGHTGRAY);
+    Console::printColorString("__", BLACK);
+    Console::gotoXY(51, 23);
+    Console::setBackground(LIGHTGRAY);
+    Console::printColorString("MY INFO", BLUE);
+
+    // RANKING
+    for (int i = 8; i < 23; i++)
+        for (int j = 19; j < 21; j++)
+            Console::printDot(i, j, LIGHTYELLOW);
+    for (int i = 9; i < 22; i++)
+        Console::printDot(i, 21, LIGHTYELLOW);
+    for (int i = 10; i < 21; i++)
+        Console::printDot(i, 22, LIGHTYELLOW);
+    Console::printDot(9, 18, LIGHTYELLOW);
+    Console::printDot(10, 18, LIGHTYELLOW);
+    Console::printDot(20, 18, LIGHTYELLOW);
+    Console::printDot(21, 18, LIGHTYELLOW);
+    for (int i = 13; i < 18; i++) {
+        Console::printDot(i, 18, LIGHTYELLOW);
+        Console::printDot(i, 16, LIGHTYELLOW);
+    }
+    for (int i = 15; i < 18; i++)
+        Console::printDot(15, i, LIGHTYELLOW);
+    Console::printDot(15, 16, LIGHTCYAN);
+    Console::printDot(15, 18, MAGENTA);
+    Console::printDot(15, 19, MAGENTA);
+    Console::printDot(13, 19, MAGENTA);
+    Console::printDot(14, 19, MAGENTA);
+    Console::printDot(13, 20, MAGENTA);
+    for (int i = 14; i < 18; i++)
+        Console::printDot(i, 20, LIGHTMAGENTA);
+    Console::printDot(16, 19, LIGHTMAGENTA);
+    Console::printDot(17, 19, LIGHTMAGENTA);
+    for (int i = 13; i < 18; i++)
+        Console::printDot(i, 21, LIGHTMAGENTA);
+    Console::printDot(10, 19, MAGENTA);
+    Console::printDot(10, 20, MAGENTA);
+    Console::printDot(9, 19, LIGHTMAGENTA);
+    Console::printDot(9, 20, LIGHTMAGENTA);
+    Console::printDot(10, 21, LIGHTMAGENTA);
+    Console::printDot(20, 19, MAGENTA);
+    Console::printDot(20, 20, MAGENTA);
+    Console::printDot(21, 19, LIGHTMAGENTA);
+    Console::printDot(21, 20, LIGHTMAGENTA);
+    Console::printDot(20, 21, LIGHTMAGENTA);
+    Console::gotoXY(11, 23);
+    Console::setBackground(LIGHTGRAY);
+    Console::printColorString(" RANKING", CYAN);
+
+    // MINI GAME
+    Console::gotoXY(6, 7);
+    Console::setBackground(GRAY);
+    Console::printColorString("◀     ▶ ", LIGHTGRAY);
+    Console::gotoXY(9, 6);
+    Console::setBackground(GRAY);
+    Console::printColorString("▲ ", GRAY);
+    Console::gotoXY(9, 5);
+    Console::setBackground(GRAY);
+    Console::printColorString("▲ ", LIGHTGRAY);
+    Console::gotoXY(9, 8);
+    Console::setBackground(GRAY);
+    Console::printColorString("▲ ", GRAY);
+    Console::gotoXY(9, 9);
+    Console::setBackground(GRAY);
+    Console::printColorString("▼ ", LIGHTGRAY);
+    Console::gotoXY(17, 6);
+    Console::setBackground(LIGHTRED);
+    Console::printColorString(" X ", LIGHTGRAY);
+    Console::gotoXY(22, 6);
+    Console::setBackground(BLUE);
+    Console::printColorString(" A ", LIGHTGRAY);
+    Console::gotoXY(17, 8);
+    Console::setBackground(GREEN);
+    Console::printColorString(" Y ", LIGHTGRAY);
+    Console::gotoXY(22, 8);
+    Console::setBackground(YELLOW);
+    Console::printColorString(" B ", LIGHTGRAY);
+    Console::gotoXY(11, 10);
+    Console::setBackground(LIGHTGRAY);
+    Console::printColorString(" MINI GAME", GRAY);
+
+    // PLAY
+    for (int i = 24; i < 45; i++)
+        for (int j = 11; j < 16; j++)
+            Console::printDot(i, j, BLACK);
+    // P
+    for (int i = 11; i < 16; i++)
+        Console::printDot(24, i, LIGHTMAGENTA);
+    for (int i = 25; i < 28; i++) {
+        Console::printDot(i, 11, LIGHTMAGENTA);
+        Console::printDot(i, 13, LIGHTMAGENTA);
+    }
+    Console::printDot(27, 12, LIGHTMAGENTA);
+    // L
+    for (int i = 11; i < 16; i++)
+        Console::printDot(29, i, LIGHTBLUE);
+    for (int i = 30; i < 33; i++)
+        Console::printDot(i, 15, LIGHTBLUE);
+    // A
+    for (int i = 11; i < 16; i++) {
+        Console::printDot(34, i, LIGHTMAGENTA);
+        Console::printDot(37, i, LIGHTMAGENTA);
+    }
+    for (int i = 35; i < 37; i++) {
+        Console::printDot(i, 13, LIGHTMAGENTA);
+        Console::printDot(i, 11, LIGHTMAGENTA);
+    }
+    // Y
+    for (int i = 11; i < 14; i++) {
+        Console::printDot(39, i, LIGHTBLUE);
+        Console::printDot(44, i, LIGHTBLUE);
+    }
+    for (int i = 40; i < 44; i++)
+        Console::printDot(i, 13, LIGHTBLUE);
+    for (int i = 14; i < 16; i++)
+        Console::printDot(41, i, LIGHTBLUE);
+
     Console::gotoEnd();
 }
