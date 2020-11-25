@@ -67,10 +67,10 @@ class Store {
     int menu1, menu2, menu3, menu4;
 
     //경로
-    char *path_menu1 = "/home/id(???)/recipes/menu1"; //경로 수정해야함!!
-    char *path_menu2 = "/home/id(???)/recipes/menu2";
-    char *path_menu3 = "/home/id(???)/recipes/menu3";
-    char *path_menu4 = "/home/id(???)/recipes/menu4";
+    char *path_menu1; //= "/home/id(???)/recipes/menu1"; //경로 수정해야함!!
+    char *path_menu2; //= "/home/id(???)/recipes/menu2";
+    char *path_menu3; //= "/home/id(???)/0recipes/menu3";
+    char *path_menu4; //= "/home/id(???)/recipes/menu4";
 
     //레시피 가격
     int cost_menu1 = 1;

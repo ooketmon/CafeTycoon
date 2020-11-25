@@ -1,10 +1,12 @@
 #include "perform.hpp"
 #include "console.hpp"
+#include "user.hpp"
 #include <fcntl.h>
 #include <iostream>
 #include <map>
 #include <pthread.h>
 #include <pwd.h>
+#include <queue>
 #include <random>
 #include <signal.h>
 #include <stack>
@@ -14,7 +16,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <user.hpp>
 
 using namespace std;
 
@@ -168,7 +169,7 @@ void gameOver(int signum) {
 void *showTime(void *) {
     for (int i = 0; i < 60; i++) {
         sleep(1);
-        cout << i << endl;
+        // cout << i << endl;
         // 시간초 보여주는 함수 넣기;
     }
 }
@@ -179,6 +180,8 @@ void Game::start(User &user) {
     int id;
     Msg msg;
     size_t size = sizeof(msg) - sizeof(long);
+
+    string checkShowRecipe;
 
     msg.type = 0;
     srand(static_cast<unsigned int>(time(0)));
@@ -191,18 +194,25 @@ void Game::start(User &user) {
         perror("fork() error!");
         return;
     } else if (pid == 0) {
-        //게임 종료 후
+        //게임 종료 후 데이터 저장
         msgsnd(id, &msg, size, 0);
 
     } else {
         //게임 진행
-        map<string, int> orderd; // 커피 종류 및 수량 저장
-        int numberOfType;        // 커피 종류 개수
-        int kind;                //커피 종류
-        vector<string> coffeeName = {"americano", "cafeLattee",
-                                     "blackTea",  "cafeMocha",
-                                     "lemonade",  "caramelMacchiato"};
-        map<string, int>::iterator iter;
+        map<int, int> orderd; // 커피 종류 및 수량 저장
+        int numberOfType;     // 커피 종류 개수
+        int kind;             // 커피 종류
+
+        const vector<string> coffeeName = {"americano", "cafeLattee",
+                                           "blackTea",  "cafeMocha",
+                                           "lemonade",  "caramelMacchiato"};
+        const vector<vector<string>> ingerdients = {
+            {"0", "1", "2"},
+            {"water", "milk", "sparkling water"},
+            {"mochaSyrup", "lemonSyrup", "caramelSyrup"},
+            {"blackTeaBag", "ice", "caramelDrizzle"}};
+
+        map<int, int>::iterator iter;
 
         //난수 생성
         random_device rd;
@@ -215,7 +225,7 @@ void Game::start(User &user) {
             user.getlevel()); //커피 종류
 
         //타이머 설정
-        alarm(10);
+        // alarm(10);
 
         // 시간 보여주기
         pthread_t tid = 0;
@@ -234,18 +244,174 @@ void Game::start(User &user) {
         for (int i = 0; i < numberOfType; i++) {
             kind = randKindOfType(gen);
             if (user.getRecipe(kind)) {
-                orderd[coffeeName[kind]] = randQuantity(gen);
+                orderd[kind] = randQuantity(gen);
             } else {
                 i--;
             }
         }
 
         // ------ 디자인 변경 필요 -----
+        //주문 정보 출력
         for (iter = orderd.begin(); iter != orderd.end(); iter++) {
-            cout << "[" << iter->first << ", " << iter->second << "]" << endl;
+            cout << "[" << coffeeName[iter->first] << ", " << iter->second
+                 << "]" << endl;
         }
+
+        // ------ 디자인 변경 필요 -----
+        //레시피 출력 여부
+        cout << "Do you want show recepie? : ";
+        cin >> checkShowRecipe;
+
+        if (checkShowRecipe == "y") {
+            // ------ 디자인 변경 필요 -----
+            //레시피 출력
+            for (iter = orderd.begin(); iter != orderd.end(); iter++) {
+                switch (iter->first) {
+                case 0:
+                    cout << "Americano : shot(2), water" << endl;
+                    break;
+                case 1:
+                    cout << "Cafe Lattee : shot(2), milk" << endl;
+                    break;
+                case 2:
+                    cout << "Cafe Lattee : black tea bag, water" << endl;
+                    break;
+                case 3:
+                    cout << "Cafe Mocha : mocha syrup, shot(2), milk " << endl;
+                    break;
+                case 4:
+                    cout << "Lemonade : shot(2), milk" << endl;
+                    break;
+                case 5:
+                    cout << "Carame Macchiato : caramel syrup, mikl, "
+                            "shot(2), "
+                            "carmel drizzle"
+                         << endl;
+                    break;
+                }
+            }
+            sleep(0); //보여주는 시간
+        }
+
+        // ------ 디자인 변경 필요 -----
+        // 재료 선택을 위해 재료 보여주기
+        for (vector<string> v : ingerdients) {
+            for (string item : v) {
+                cout << item << " ";
+            }
+            cout << endl;
+        }
+
+        Console::linux_getch(); //입력 버퍼에 남아있는 엔터키 제거
+        vector<int> makeCoffee(numberOfType); //최종 제작 커피
+
+        for (int i = 0; i < numberOfType; i++) {
+            int selectIngerdients = 0; //선택한 커피 재료 모음
+
+            while (1) {         // 커피 재료 선택
+                int select = 1; // 선택한 재료 저장
+                char ch;        // 키보드 입력
+
+                while (1) { // 방향키 입력
+                    cout << "select : " << select << endl;
+                    ch = Console::linux_getch();
+                    cout << ch;
+                    if (ch == ENTER) {
+                        break;
+                    } else if (ch == 'y') { // 커피 완성
+                        break;
+                    } else {
+                        Console::linux_getch();
+                        ch = Console::linux_getch();
+                        if (ch == 'A') {
+                            // UP
+                            if (select / 1000 > 1) //재료 라인
+                                select -= 2000;
+                            else if ((select % 1000) / 100 > 1) //시럽 라인
+                                select -= 200;
+                            else if ((select % 100) / 10 > 1) //베이스 라인
+                                select -= 20;
+                            else if ((select % 10) > 1) //샷 라인
+                                select -= 2;
+                        } else if (ch == 'B') {
+                            // DOWN
+                            if (select / 10 == 0) {
+                                // 샷 라인
+                                if (select % 10 < 5) {
+                                    select += 2;
+                                }
+                            } else if (select / 100 == 0) {
+                                // 베이스 라인
+                                if (select % 100 < 50) {
+                                    select += 20;
+                                }
+                            } else if (select / 1000 == 0) {
+                                // 시럽 라인
+                                if (select % 1000 < 500) {
+                                    select += 200;
+                                }
+                            } else if (select % 10000 < 5000) {
+                                // 재료 라인
+                                select += 2000;
+                            }
+                        } else if (ch == 'C') { // RIGHT
+                            if (select % 10 != 0) {
+                                //샷 라인
+                                select = INGERDIENTS::water;
+                            } else if (select % 100 != 0) {
+                                //베이스 라인
+                                select = INGERDIENTS::mochaSyrup;
+                            } else if (select % 1000 != 0) {
+                                //시럽 라인
+                                select = INGERDIENTS::blackTeaBag;
+                            }
+                        } else if (ch == 'D') { // LEFT
+                            if (select / 1000 != 0) {
+                                //재료 라인
+                                select = INGERDIENTS::mochaSyrup;
+                            } else if (select / 100 != 0) {
+                                //시럽 라인
+                                select = INGERDIENTS::water;
+                            } else if (select / 10 != 0) {
+                                //베이스 라인
+                                select = INGERDIENTS::shot1;
+                            }
+                        }
+                    }
+                }
+
+                if (ch == 'y') {
+                    //커피만들기
+                    makeCoffee[i] = selectIngerdients;
+                    break;
+                }
+
+                // 같은 종류 재료 중복 추가 불가!
+                if (select % 10 != 0) {
+                    //샷 라인
+                    selectIngerdients +=
+                        (selectIngerdients % 10 == 0) ? select : 0;
+                } else if (select % 100 != 0) {
+                    //베이스 라인
+                    selectIngerdients +=
+                        ((selectIngerdients % 100) / 10 == 0) ? select : 0;
+                } else if (select % 1000 != 0) {
+                    //시럽 라인
+                    selectIngerdients +=
+                        ((selectIngerdients % 1000) / 100 == 0) ? select : 0;
+                } else if (select % 10000 != 0) {
+                    //재료 라인
+                    selectIngerdients +=
+                        ((selectIngerdients % 10000) / 1000 == 0) ? select : 0;
+                }
+
+                cout << "selectIngerdients : " << selectIngerdients << endl;
+            }
+        }
+
+        msgrcv(id, &msg, size, msg.type,
+               0); //데이터 저장 프로세스에게 데이터 전송
         //}
-        msgrcv(id, &msg, size, msg.type, 0);
     }
 
     msgctl(id, IPC_RMID, NULL);

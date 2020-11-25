@@ -2,7 +2,7 @@
 
 User::User(string _name) {
     name = _name;
-    level = 1;
+    level = 5; // 1로 바꾸기
     money = 0;
     countSell = 0;
     recipe.assign(2, true);
