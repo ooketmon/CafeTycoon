@@ -202,6 +202,7 @@ void Game::start(User &user) {
         map<int, int> orderd; // 커피 종류 및 수량 저장
         int numberOfType;     // 커피 종류 개수
         int kind;             // 커피 종류
+        RECIPE recipe;
 
         const vector<string> coffeeName = {"americano", "cafeLattee",
                                            "blackTea",  "cafeMocha",
@@ -213,6 +214,8 @@ void Game::start(User &user) {
             {"blackTeaBag", "ice", "caramelDrizzle"}};
 
         map<int, int>::iterator iter;
+        map<int, int>::iterator c_end;
+
 
         //난수 생성
         random_device rd;
@@ -243,7 +246,8 @@ void Game::start(User &user) {
 
         for (int i = 0; i < numberOfType; i++) {
             kind = randKindOfType(gen);
-            if (user.getRecipe(kind)) {
+            c_end = orderd.end();
+            if (user.getRecipe(kind) && orderd.find(kind) == c_end) {
                 orderd[kind] = randQuantity(gen);
             } else {
                 i--;
@@ -252,6 +256,7 @@ void Game::start(User &user) {
 
         // ------ 디자인 변경 필요 -----
         //주문 정보 출력
+        cout << numberOfType << endl;
         for (iter = orderd.begin(); iter != orderd.end(); iter++) {
             cout << "[" << coffeeName[iter->first] << ", " << iter->second
                  << "]" << endl;
@@ -315,7 +320,6 @@ void Game::start(User &user) {
                 while (1) { // 방향키 입력
                     cout << "select : " << select << endl;
                     ch = Console::linux_getch();
-                    cout << ch;
                     if (ch == ENTER) {
                         break;
                     } else if (ch == 'y') { // 커피 완성
@@ -409,6 +413,9 @@ void Game::start(User &user) {
             }
         }
 
+        for(int i = 0; i < numberOfType; i++){
+            
+        }
         msgrcv(id, &msg, size, msg.type,
                0); //데이터 저장 프로세스에게 데이터 전송
         //}
