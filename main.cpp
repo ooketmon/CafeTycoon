@@ -6,10 +6,4 @@
 
 using namespace std;
 
-int main() {
-    User user("SON");
-    Game game;
-    game.start(user);
-
-    return 0;
-}
+int main() { return 0; }
