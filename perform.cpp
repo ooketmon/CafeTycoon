@@ -184,8 +184,6 @@ void Game::start(User &user) {
     string checkShowRecipe;
 
     msg.type = 0;
-    srand(static_cast<unsigned int>(time(0)));
-
     key = ftok("./main.cpp", 1);
     id = msgget(key, IPC_CREAT | 0600);
 
@@ -195,27 +193,46 @@ void Game::start(User &user) {
         return;
     } else if (pid == 0) {
         //게임 종료 후 데이터 저장
-        msgsnd(id, &msg, size, 0);
+
+        msgrcv(id, &msg, size, msg.type, 0);
+        cout << "0 : " << msg.data[0] << ", 1 : " << msg.data[1];
+        user.addMoney(msg.data[0]);
+        user.addCountsell(msg.data[1]);
 
     } else {
         //게임 진행
         map<int, int> orderd; // 커피 종류 및 수량 저장
         int numberOfType;     // 커피 종류 개수
         int kind;             // 커피 종류
-        RECIPE recipe;
 
         const vector<string> coffeeName = {"americano", "cafeLattee",
                                            "blackTea",  "cafeMocha",
                                            "lemonade",  "caramelMacchiato"};
+
+        const vector<int> coffeePrice = {1000, 1500, 2000, 3000, 4000, 5000};
+        const vector<int> recipe = {12, 32, 1010, 132, 3350, 5532};
+        // 올바른 recipe 값
+        // americano = 12,cafeLattee = 22, blackTea = 1010, cafeMocha = 122,
+        // lemonade = 2250,caramelMacchiato = 5522
         const vector<vector<string>> ingerdients = {
             {"0", "1", "2"},
             {"water", "milk", "sparkling water"},
             {"mochaSyrup", "lemonSyrup", "caramelSyrup"},
             {"blackTeaBag", "ice", "caramelDrizzle"}};
+        const double failPercnt = 0.8;
 
         map<int, int>::iterator iter;
         map<int, int>::iterator c_end;
 
+        int selectIngerdients; //선택한 커피 재료 모음
+        int select;            // 선택한 재료 저장
+
+        vector<vector<int>> makeCoffee; //최종 제작 커피 저장 배열
+        bool successOrfail;             // 성공 여부
+        int totalPrice;                 // 획득한 돈
+        int countSell;
+
+        char ch; // 키보드 입력
 
         //난수 생성
         random_device rd;
@@ -244,6 +261,7 @@ void Game::start(User &user) {
         // while () {
         numberOfType = randNumberOfType(gen);
 
+        // 메뉴 주문
         for (int i = 0; i < numberOfType; i++) {
             kind = randKindOfType(gen);
             c_end = orderd.end();
@@ -308,116 +326,150 @@ void Game::start(User &user) {
         }
 
         Console::linux_getch(); //입력 버퍼에 남아있는 엔터키 제거
-        vector<int> makeCoffee(numberOfType); //최종 제작 커피
+        //배열 초기화
 
-        for (int i = 0; i < numberOfType; i++) {
-            int selectIngerdients = 0; //선택한 커피 재료 모음
+        makeCoffee = vector<vector<int>>(numberOfType, vector<int>(5));
+        iter = orderd.begin();
+        for (int i = 0; i < numberOfType && iter != orderd.end(); iter++, i++) {
 
-            while (1) {         // 커피 재료 선택
-                int select = 1; // 선택한 재료 저장
-                char ch;        // 키보드 입력
+            for (int j = 0; j < iter->second; j++) {
 
-                while (1) { // 방향키 입력
-                    cout << "select : " << select << endl;
-                    ch = Console::linux_getch();
-                    if (ch == ENTER) {
-                        break;
-                    } else if (ch == 'y') { // 커피 완성
-                        break;
-                    } else {
-                        Console::linux_getch();
+                selectIngerdients = 0;
+
+                while (1) { // 커피 재료 선택
+                    select = 1;
+                    // 키보드 입력
+                    while (1) { // 방향키 입력
+                        cout << "select : " << select << endl;
                         ch = Console::linux_getch();
-                        if (ch == 'A') {
-                            // UP
-                            if (select / 1000 > 1) //재료 라인
-                                select -= 2000;
-                            else if ((select % 1000) / 100 > 1) //시럽 라인
-                                select -= 200;
-                            else if ((select % 100) / 10 > 1) //베이스 라인
-                                select -= 20;
-                            else if ((select % 10) > 1) //샷 라인
-                                select -= 2;
-                        } else if (ch == 'B') {
-                            // DOWN
-                            if (select / 10 == 0) {
-                                // 샷 라인
-                                if (select % 10 < 5) {
-                                    select += 2;
+                        if (ch == ENTER) {
+                            break;
+                        } else if (ch == 'y') { // 커피 완성
+                            break;
+                        } else {
+                            Console::linux_getch();
+                            ch = Console::linux_getch();
+                            if (ch == 'A') {
+                                // UP
+                                if (select / 1000 > 1) //재료 라인
+                                    select -= 2000;
+                                else if ((select % 1000) / 100 > 1) //시럽 라인
+                                    select -= 200;
+                                else if ((select % 100) / 10 > 1) //베이스 라인
+                                    select -= 20;
+                                else if ((select % 10) > 1) //샷 라인
+                                    select -= 1;
+                            } else if (ch == 'B') {
+                                // DOWN
+                                if (select / 10 == 0) {
+                                    // 샷 라인
+                                    if (select % 10 < 5) {
+                                        select += 1;
+                                    }
+                                } else if (select / 100 == 0) {
+                                    // 베이스 라인
+                                    if (select % 100 < 50) {
+                                        select += 20;
+                                    }
+                                } else if (select / 1000 == 0) {
+                                    // 시럽 라인
+                                    if (select % 1000 < 500) {
+                                        select += 200;
+                                    }
+                                } else if (select % 10000 < 5000) {
+                                    // 재료 라인
+                                    select += 2000;
                                 }
-                            } else if (select / 100 == 0) {
-                                // 베이스 라인
-                                if (select % 100 < 50) {
-                                    select += 20;
+                            } else if (ch == 'C') { // RIGHT
+                                if (select % 10 != 0) {
+                                    //샷 라인
+                                    select = 10;
+                                } else if (select % 100 != 0) {
+                                    //베이스 라인
+                                    select = 100;
+                                } else if (select % 1000 != 0) {
+                                    //시럽 라인
+                                    select = 1000;
                                 }
-                            } else if (select / 1000 == 0) {
-                                // 시럽 라인
-                                if (select % 1000 < 500) {
-                                    select += 200;
+                            } else if (ch == 'D') { // LEFT
+                                if (select / 1000 != 0) {
+                                    //재료 라인
+                                    select = 100;
+                                } else if (select / 100 != 0) {
+                                    //시럽 라인
+                                    select = 10;
+                                } else if (select / 10 != 0) {
+                                    //베이스 라인
+                                    select = 1;
                                 }
-                            } else if (select % 10000 < 5000) {
-                                // 재료 라인
-                                select += 2000;
-                            }
-                        } else if (ch == 'C') { // RIGHT
-                            if (select % 10 != 0) {
-                                //샷 라인
-                                select = INGERDIENTS::water;
-                            } else if (select % 100 != 0) {
-                                //베이스 라인
-                                select = INGERDIENTS::mochaSyrup;
-                            } else if (select % 1000 != 0) {
-                                //시럽 라인
-                                select = INGERDIENTS::blackTeaBag;
-                            }
-                        } else if (ch == 'D') { // LEFT
-                            if (select / 1000 != 0) {
-                                //재료 라인
-                                select = INGERDIENTS::mochaSyrup;
-                            } else if (select / 100 != 0) {
-                                //시럽 라인
-                                select = INGERDIENTS::water;
-                            } else if (select / 10 != 0) {
-                                //베이스 라인
-                                select = INGERDIENTS::shot1;
                             }
                         }
                     }
-                }
 
-                if (ch == 'y') {
-                    //커피만들기
-                    makeCoffee[i] = selectIngerdients;
-                    break;
-                }
+                    if (ch == 'y') {
+                        //커피만들기
+                        makeCoffee[i][j] = selectIngerdients;
+                        //--------test-----------
+                        cout << "selectIngerdients : " << selectIngerdients
+                             << endl;
+                        break;
+                    }
 
-                // 같은 종류 재료 중복 추가 불가!
-                if (select % 10 != 0) {
-                    //샷 라인
-                    selectIngerdients +=
-                        (selectIngerdients % 10 == 0) ? select : 0;
-                } else if (select % 100 != 0) {
-                    //베이스 라인
-                    selectIngerdients +=
-                        ((selectIngerdients % 100) / 10 == 0) ? select : 0;
-                } else if (select % 1000 != 0) {
-                    //시럽 라인
-                    selectIngerdients +=
-                        ((selectIngerdients % 1000) / 100 == 0) ? select : 0;
-                } else if (select % 10000 != 0) {
-                    //재료 라인
-                    selectIngerdients +=
-                        ((selectIngerdients % 10000) / 1000 == 0) ? select : 0;
-                }
+                    // 같은 종류 재료 중복 추가 불가!
+                    if (select % 10 != 0) {
+                        //샷 라인
+                        selectIngerdients +=
+                            (selectIngerdients % 10 == 0) ? select : 0;
+                    } else if (select % 100 != 0) {
+                        //베이스 라인
+                        selectIngerdients +=
+                            ((selectIngerdients % 100) / 10 == 0) ? select : 0;
+                    } else if (select % 1000 != 0) {
+                        //시럽 라인
+                        selectIngerdients +=
+                            ((selectIngerdients % 1000) / 100 == 0) ? select
+                                                                    : 0;
+                    } else if (select % 10000 != 0) {
+                        //재료 라인
+                        selectIngerdients +=
+                            ((selectIngerdients % 10000) / 1000 == 0) ? select
+                                                                      : 0;
+                    }
 
-                cout << "selectIngerdients : " << selectIngerdients << endl;
+                    //--------test-----------
+                    cout << "selectIngerdients : " << selectIngerdients << endl;
+                }
             }
         }
 
-        for(int i = 0; i < numberOfType; i++){
-            
+        iter = orderd.begin();
+        successOrfail = true;
+        totalPrice = 0;
+        countSell = 0;
+
+        for (int i = 0; i < numberOfType && iter != orderd.end(); i++, iter++) {
+            countSell += iter->second;
+            for (int j = 0; j < iter->second; j++) {
+                if (recipe[iter->first] != makeCoffee[i][j]) {
+                    successOrfail = false;
+                    cout << coffeeName[iter->first] << ": false" << endl;
+                    totalPrice += coffeePrice[iter->first] * failPercnt;
+                } else {
+                    totalPrice += coffeePrice[iter->first];
+                    cout << coffeeName[iter->first] << ": true" << endl;
+                }
+            }
         }
-        msgrcv(id, &msg, size, msg.type,
-               0); //데이터 저장 프로세스에게 데이터 전송
+
+        //-----------test--------
+        cout << "totalPrice : " << totalPrice << ", countSell : " << countSell
+             << endl;
+        msg.data[0] = totalPrice;
+        msg.data[1] = countSell;
+
+        msgsnd(id, &msg, size, 0); //데이터 저장 프로세스에게 데이터 전송
+        while (1)
+            sleep(1);
         //}
     }
 
