@@ -14,11 +14,16 @@ int main() {
     // page.startPage();
     // page.login();
     // page.signUp();
-    page.mainPage();
+    // page.mainPage();
+    // page.workingPage1();
+    // page.makingDrink();
+    // page.workingPage2();
+    // page.workingPage3();
+    page.workingPage4();
 
-    Data data;
+    // Data data;
 
     // data.signUp();
-    data.signIn();
+    // data.signIn();
     return 0;
 }

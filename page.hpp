@@ -17,6 +17,11 @@ class Page {
     void login();
     // void signUp();
     void mainPage();
+    void workingPage1();
+    void makingDrink();
+    void workingPage2();
+    void workingPage3();
+    void workingPage4();
 };
 
 #endif
